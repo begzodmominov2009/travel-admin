@@ -16,31 +16,36 @@ import TourTagPage from "./pages/tour-tag/TourTagPage";
 import Layout from "./components/Layout";
 import CategoryPage from "./pages/category/CategoryPage";
 import CountryPage from "./pages/country/CountryPage";
+  import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function App() {
-  return (
-    <Router>
-      <Routes>
-        {/* Barcha sahifalar Layout bilan o‘raladi */}
-        <Route element={<Layout />}>
-          <Route path="/category" element={<CategoryPage />} />
-          <Route path="/country" element={<CountryPage />} />
 
-          <Route path="/destination" element={<DestinationPage />} />
-          <Route path="/faq" element={<FaqPage />} />
-          <Route path="/hotel" element={<HotelPage />} />
-          <Route path="/media" element={<MediaPage />} />
-          <Route path="/package-hotel" element={<PackageHotelPage />} />
-          <Route path="/package-tag" element={<PackageTagPage />} />
-          <Route path="/package-tour" element={<PackageTourPage />} />
-          <Route path="/packages" element={<PackagesPage />} />
-          <Route path="/tags" element={<TagsPage />} />
-          <Route path="/tour" element={<TourPage />} />
-          <Route path="/tour-schedule" element={<TourSchedualePage />} />
-          <Route path="/tour-tag" element={<TourTagPage />} />
-        </Route>
-      </Routes>
-    </Router>
+  const queryClient = new QueryClient();
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <Routes>
+          {/* Barcha sahifalar Layout bilan o‘raladi */}
+          <Route element={<Layout />}>
+            <Route path="/category" element={<CategoryPage />} />
+            <Route path="/country" element={<CountryPage />} />
+
+            <Route path="/destination" element={<DestinationPage />} />
+            <Route path="/faq" element={<FaqPage />} />
+            <Route path="/hotel" element={<HotelPage />} />
+            <Route path="/media" element={<MediaPage />} />
+            <Route path="/package-hotel" element={<PackageHotelPage />} />
+            <Route path="/package-tag" element={<PackageTagPage />} />
+            <Route path="/package-tour" element={<PackageTourPage />} />
+            <Route path="/packages" element={<PackagesPage />} />
+            <Route path="/tags" element={<TagsPage />} />
+            <Route path="/tour" element={<TourPage />} />
+            <Route path="/tour-schedule" element={<TourSchedualePage />} />
+            <Route path="/tour-tag" element={<TourTagPage />} />
+          </Route>
+        </Routes>
+      </Router>
+    </QueryClientProvider>
   );
 }
 

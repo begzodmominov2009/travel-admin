@@ -1,65 +1,63 @@
-// hooks/useApi.js
-import { useState } from "react";
-import axios from "axios";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { api } from "../services/api";
 
-const BASE_URL = "https://x8ki-letl-twmt.n7.xano.io/api:qNrTfAaz";
+// ================= GET =================
+export const useGet = (key, endpoint, params = {}, options = {}) => {
+  return useQuery({
+    queryKey: [key, params],
+    queryFn: async () => {
+      const { data } = await api.get(`/${endpoint}`, { params });
+      return data;
+    },
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
+    refetchOnWindowFocus: false,
+    retry: 1,
+    ...options,
+  });
+};
 
-export function useApi() {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+// ================= POST =================
+export const usePost = (endpoint, keyToInvalidate) => {
+  const queryClient = useQueryClient();
 
-  const get = async (endpoint) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await axios.get(`${BASE_URL}/${endpoint}`);
-      setData(res.data);
-    } catch (err) {
-      setError(err.message || "Error fetching data");
-    } finally {
-      setLoading(false);
-    }
-  };
+  return useMutation({
+    mutationFn: async (body) => {
+      const { data } = await api.post(`/${endpoint}`, body);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [keyToInvalidate] });
+    },
+  });
+};
 
-  const post = async (endpoint, body) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await axios.post(`${BASE_URL}/${endpoint}`, body);
-      setData(res.data);
-    } catch (err) {
-      setError(err.message || "Error posting data");
-    } finally {
-      setLoading(false);
-    }
-  };
+// ================= PATCH =================
+export const usePatch = (endpoint, keyToInvalidate) => {
+  const queryClient = useQueryClient();
 
-  const put = async (endpoint, body) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await axios.patch(`${BASE_URL}/${endpoint}`, body);
-      setData(res.data);
-    } catch (err) {
-      setError(err.message || "Error updating data");
-    } finally {
-      setLoading(false);
-    }
-  };
+  return useMutation({
+    mutationFn: async ({ id, body }) => {
+      const { data } = await api.patch(`/${endpoint}/${id}`, body);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [keyToInvalidate] });
+    },
+  });
+};
 
-  const del = async (endpoint) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await axios.delete(`${BASE_URL}/${endpoint}`);
-      setData(res.data);
-    } catch (err) {
-      setError(err.message || "Error deleting data");
-    } finally {
-      setLoading(false);
-    }
-  };
+// ================= DELETE =================
+export const useDelete = (endpoint, keyToInvalidate) => {
+  const queryClient = useQueryClient();
 
-  return { data, loading, error, get, post, put, del };
-}
+  return useMutation({
+    mutationFn: async (id) => {
+      const { data } = await api.delete(`/${endpoint}/${id}`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [keyToInvalidate] });
+    },
+  });
+};
