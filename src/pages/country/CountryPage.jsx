@@ -115,12 +115,11 @@ const CountryPage = () => {
             </tr>
           </thead>
           <tbody>
-            {countries.map((c, i) => (
+            {Array.isArray(countries) && countries.map((c, i) => (
               <tr
                 key={c.id}
-                className={`${
-                  i % 2 === 0 ? "bg-white/40" : "bg-white/20"
-                } hover:bg-blue-50 transition`}
+                className={`${i % 2 === 0 ? "bg-white/40" : "bg-white/20"
+                  } hover:bg-blue-50 transition`}
               >
                 <td className="border-b border-gray-200 px-3 py-2">{c.id}</td>
                 <td className="border-b border-gray-200 px-3 py-2 flex items-center justify-center">
@@ -138,12 +137,8 @@ const CountryPage = () => {
                   {c.name}
                 </td>
                 <td className="border-b border-gray-200 px-3 py-2">{c.code}</td>
-                <td className="border-b border-gray-200 px-3 py-2">
-                  {c.continent}
-                </td>
-                <td className="border-b border-gray-200 px-3 py-2">
-                  {c.currency}
-                </td>
+                <td className="border-b border-gray-200 px-3 py-2">{c.continent}</td>
+                <td className="border-b border-gray-200 px-3 py-2">{c.currency}</td>
                 <td className="border-b border-gray-200 px-3 py-2">
                   {c.visa_required ? "Yes" : "No"}
                 </td>

@@ -20,9 +20,7 @@ const LocationPicker = ({ latitude, longitude, setFormData }) => {
     },
   });
 
-  return latitude && longitude ? (
-    <Marker position={[latitude, longitude]} />
-  ) : null;
+  return latitude && longitude ? <Marker position={[latitude, longitude]} /> : null;
 };
 
 const DestinationPage = () => {
@@ -169,15 +167,11 @@ const DestinationPage = () => {
             </tr>
           </thead>
           <tbody>
-            {destinations.map((dest) => (
-              <tr
-                key={dest.id}
-                className="border-t hover:bg-gray-50 transition"
-              >
+            {Array.isArray(destinations) && destinations.map((dest) => (
+              <tr key={dest.id} className="border-t hover:bg-gray-50 transition">
                 <td className="px-4 py-3 text-xs text-gray-500">{dest.id}</td>
                 <td className="px-4 py-3 text-xs text-gray-500">
-                  {countries.find((c) => c.id === dest.country_id)?.name ||
-                    dest.country_id}
+                  {Array.isArray(countries) && countries.find((c) => c.id === dest.country_id)?.name || dest.country_id}
                 </td>
                 <td className="px-4 py-3 font-medium">{dest.name}</td>
                 <td className="px-4 py-3">{dest.name_uz}</td>
@@ -189,22 +183,20 @@ const DestinationPage = () => {
                 <td className="px-4 py-3">{dest.longitude}</td>
                 <td className="px-4 py-3">
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      dest.is_popular
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${dest.is_popular
                         ? "bg-yellow-100 text-yellow-600"
                         : "bg-gray-200 text-gray-500"
-                    }`}
+                      }`}
                   >
                     {dest.is_popular ? "Popular" : "No"}
                   </span>
                 </td>
                 <td className="px-4 py-3">
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      dest.is_active
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${dest.is_active
                         ? "bg-green-100 text-green-600"
                         : "bg-gray-200 text-gray-500"
-                    }`}
+                      }`}
                   >
                     {dest.is_active ? "Active" : "Inactive"}
                   </span>
@@ -246,53 +238,19 @@ const DestinationPage = () => {
                 required
               >
                 <option value="">Select Country</option>
-                {countries.map((country) => (
+                {Array.isArray(countries) && countries.map((country) => (
                   <option key={country.id} value={country.id}>
                     {country.name}
                   </option>
                 ))}
               </select>
 
-              <input
-                type="text"
-                name="name"
-                placeholder="Name"
-                value={formData.name}
-                onChange={handleChange}
-                className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none"
-                required
-              />
-              <input
-                type="text"
-                name="name_uz"
-                placeholder="Name Uz"
-                value={formData.name_uz}
-                onChange={handleChange}
-                className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none"
-              />
-              <input
-                type="text"
-                name="name_ru"
-                placeholder="Name Ru"
-                value={formData.name_ru}
-                onChange={handleChange}
-                className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none"
-              />
-              <input
-                type="text"
-                name="slug"
-                placeholder="Slug"
-                value={formData.slug}
-                onChange={handleChange}
-                className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none"
-              />
-              <textarea
-                name="description"
-                placeholder="Description"
-                value={formData.description}
-                onChange={handleChange}
-                className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none"
-              />
+              {/* Name Fields */}
+              <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none" required />
+              <input type="text" name="name_uz" placeholder="Name Uz" value={formData.name_uz} onChange={handleChange} className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none" />
+              <input type="text" name="name_ru" placeholder="Name Ru" value={formData.name_ru} onChange={handleChange} className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none" />
+              <input type="text" name="slug" placeholder="Slug" value={formData.slug} onChange={handleChange} className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none" />
+              <textarea name="description" placeholder="Description" value={formData.description} onChange={handleChange} className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none" />
 
               {/* Highlights */}
               <div>
@@ -307,27 +265,16 @@ const DestinationPage = () => {
                     }
                     className="flex-1 border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none"
                   />
-                  <button
-                    type="button"
-                    onClick={addHighlight}
-                    className="px-4 py-2 bg-gray-800 text-white rounded-xl hover:opacity-80 transition"
-                  >
+                  <button type="button" onClick={addHighlight} className="px-4 py-2 bg-gray-800 text-white rounded-xl hover:opacity-80 transition">
                     Add
                   </button>
                 </div>
                 {formData.highlights.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-2">
                     {formData.highlights.map((h, i) => (
-                      <span
-                        key={i}
-                        className="flex items-center gap-1 bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm"
-                      >
+                      <span key={i} className="flex items-center gap-1 bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
                         {h}
-                        <button
-                          type="button"
-                          onClick={() => removeHighlight(i)}
-                          className="text-gray-400 hover:text-red-500 transition ml-1"
-                        >
+                        <button type="button" onClick={() => removeHighlight(i)} className="text-gray-400 hover:text-red-500 transition ml-1">
                           ×
                         </button>
                       </span>
@@ -338,94 +285,37 @@ const DestinationPage = () => {
 
               {/* MAP PICKER */}
               <div className="my-4">
-                <label className="block mb-2 font-medium">
-                  Pick Location on Map
-                </label>
+                <label className="block mb-2 font-medium">Pick Location on Map</label>
                 <MapContainer
-                  center={[
-                    formData.latitude || 41.2995,
-                    formData.longitude || 69.2401,
-                  ]}
+                  center={[formData.latitude || 41.2995, formData.longitude || 69.2401]}
                   zoom={5}
                   style={{ height: "300px", width: "100%" }}
                 >
                   <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                  <LocationPicker
-                    latitude={formData.latitude}
-                    longitude={formData.longitude}
-                    setFormData={setFormData}
-                  />
+                  <LocationPicker latitude={formData.latitude} longitude={formData.longitude} setFormData={setFormData} />
                 </MapContainer>
-                <p className="text-sm text-gray-500 mt-1">
-                  Latitude: {formData.latitude}, Longitude: {formData.longitude}
-                </p>
+                <p className="text-sm text-gray-500 mt-1">Latitude: {formData.latitude}, Longitude: {formData.longitude}</p>
               </div>
 
-              <input
-                type="text"
-                name="timezone"
-                placeholder="Timezone (e.g. Asia/Tashkent)"
-                value={formData.timezone}
-                onChange={handleChange}
-                className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none"
-              />
-              <input
-                type="text"
-                name="best_season"
-                placeholder="Best Season (e.g. Spring, Summer)"
-                value={formData.best_season}
-                onChange={handleChange}
-                className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none"
-              />
-              <input
-                type="text"
-                name="cover_image"
-                placeholder="Cover Image URL"
-                value={formData.cover_image}
-                onChange={handleChange}
-                className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none"
-              />
+              {/* Other Fields */}
+              <input type="text" name="timezone" placeholder="Timezone" value={formData.timezone} onChange={handleChange} className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none" />
+              <input type="text" name="best_season" placeholder="Best Season" value={formData.best_season} onChange={handleChange} className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none" />
+              <input type="text" name="cover_image" placeholder="Cover Image URL" value={formData.cover_image} onChange={handleChange} className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none" />
 
               {/* Flags */}
               <div className="flex gap-6 mt-2">
                 <label className="flex items-center gap-3 text-sm">
-                  <input
-                    type="checkbox"
-                    name="is_popular"
-                    checked={formData.is_popular}
-                    onChange={handleChange}
-                    className="w-4 h-4"
-                  />
-                  Popular
+                  <input type="checkbox" name="is_popular" checked={formData.is_popular} onChange={handleChange} className="w-4 h-4" /> Popular
                 </label>
                 <label className="flex items-center gap-3 text-sm">
-                  <input
-                    type="checkbox"
-                    name="is_active"
-                    checked={formData.is_active}
-                    onChange={handleChange}
-                    className="w-4 h-4"
-                  />
-                  Active
+                  <input type="checkbox" name="is_active" checked={formData.is_active} onChange={handleChange} className="w-4 h-4" /> Active
                 </label>
               </div>
 
               {/* Submit */}
               <div className="flex justify-end gap-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 transition"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={
-                    createDestination.isPending || updateDestination.isPending
-                  }
-                  className="px-4 py-2 rounded-xl bg-black text-white hover:opacity-80 transition"
-                >
+                <button type="button" onClick={() => setModalOpen(false)} className="px-4 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 transition">Cancel</button>
+                <button type="submit" disabled={createDestination.isPending || updateDestination.isPending} className="px-4 py-2 rounded-xl bg-black text-white hover:opacity-80 transition">
                   {editingId ? "Update" : "Create"}
                 </button>
               </div>

@@ -109,7 +109,7 @@ const CategoryPage = () => {
           </thead>
 
           <tbody>
-            {categories.map((cat) => (
+            {Array.isArray(categories) && categories.map((cat) => (
               <tr key={cat.id} className="border-t hover:bg-gray-50 transition">
                 <td className="px-4 py-3 text-xs text-gray-500">{cat.id}</td>
                 <td className="px-4 py-3 text-xs text-gray-500">
@@ -129,11 +129,10 @@ const CategoryPage = () => {
                 <td className="px-4 py-3">{cat.sort_order}</td>
                 <td className="px-4 py-3">
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      cat.is_active
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${cat.is_active
                         ? "bg-green-100 text-green-600"
                         : "bg-gray-200 text-gray-500"
-                    }`}
+                      }`}
                   >
                     {cat.is_active ? "Active" : "Inactive"}
                   </span>

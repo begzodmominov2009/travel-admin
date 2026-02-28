@@ -64,7 +64,7 @@ const FaqPage = () => {
     if (editingId) {
       updateFaq.mutate(
         { id: editingId, body: formData },
-        { onSuccess: () => get("faq") },
+        { onSuccess: () => get("faq") }
       );
     } else {
       createFaq.mutate(formData, { onSuccess: () => get("faq") });
@@ -81,11 +81,11 @@ const FaqPage = () => {
   const getEntityOptions = () => {
     switch (formData.entity_type) {
       case "package":
-        return packages;
+        return Array.isArray(packages) ? packages : [];
       case "tour":
-        return tours;
+        return Array.isArray(tours) ? tours : [];
       case "tag":
-        return tags;
+        return Array.isArray(tags) ? tags : [];
       default:
         return [];
     }
@@ -134,63 +134,68 @@ const FaqPage = () => {
               </tr>
             </thead>
             <tbody>
-              {faqs.map((faq, i) => (
-                <tr
-                  key={faq.id}
-                  className={`${i % 2 === 0 ? "bg-gray-50" : "bg-white"} hover:bg-gray-100`}
-                >
-                  <td className="border-b border-gray-200 px-3 py-2">
-                    {faq.entity_type}
-                  </td>
-                  <td className="border-b border-gray-200 px-3 py-2">
-                    {faq.entity_type === "package"
-                      ? packages.find((p) => p.id === faq.entity_id)?.title
-                      : faq.entity_type === "tour"
-                        ? tours.find((t) => t.id === faq.entity_id)?.title
-                        : faq.entity_type === "tag"
-                          ? tags.find((t) => t.id === faq.entity_id)?.name
-                          : "-"}
-                  </td>
-                  <td className="border-b border-gray-200 px-3 py-2">
-                    {faq.question}
-                  </td>
-                  <td className="border-b border-gray-200 px-3 py-2">
-                    {faq.question_uz}
-                  </td>
-                  <td className="border-b border-gray-200 px-3 py-2">
-                    {faq.answer}
-                  </td>
-                  <td className="border-b border-gray-200 px-3 py-2">
-                    {faq.answer_uz}
-                  </td>
-                  <td className="border-b border-gray-200 px-3 py-2">
-                    {faq.sort_order}
-                  </td>
-                  <td className="border-b border-gray-200 px-3 py-2">
-                    {faq.is_active ? "Yes" : "No"}
-                  </td>
-                  <td className="border-b border-gray-200 px-3 py-2 flex gap-2">
-                    <button
-                      onClick={() => openEditModal(faq)}
-                      className="px-2 py-1 bg-yellow-400 text-white rounded text-xs hover:bg-yellow-500 transition"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(faq.id)}
-                      className="px-2 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 transition"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              {faqs.length === 0 && !isLoading && (
-                <tr>
-                  <td colSpan="9" className="text-center py-6 text-gray-400">
-                    No records found
-                  </td>
-                </tr>
+              {Array.isArray(faqs) && faqs.length > 0 ? (
+                faqs.map((faq, i) => (
+                  <tr
+                    key={faq.id}
+                    className={`${i % 2 === 0 ? "bg-gray-50" : "bg-white"
+                      } hover:bg-gray-100`}
+                  >
+                    <td className="border-b border-gray-200 px-3 py-2">
+                      {faq.entity_type}
+                    </td>
+                    <td className="border-b border-gray-200 px-3 py-2">
+                      {faq.entity_type === "package"
+                        ? packages.find((p) => p.id === faq.entity_id)?.title ||
+                        "-"
+                        : faq.entity_type === "tour"
+                          ? tours.find((t) => t.id === faq.entity_id)?.title || "-"
+                          : faq.entity_type === "tag"
+                            ? tags.find((t) => t.id === faq.entity_id)?.name || "-"
+                            : "-"}
+                    </td>
+                    <td className="border-b border-gray-200 px-3 py-2">
+                      {faq.question}
+                    </td>
+                    <td className="border-b border-gray-200 px-3 py-2">
+                      {faq.question_uz}
+                    </td>
+                    <td className="border-b border-gray-200 px-3 py-2">
+                      {faq.answer}
+                    </td>
+                    <td className="border-b border-gray-200 px-3 py-2">
+                      {faq.answer_uz}
+                    </td>
+                    <td className="border-b border-gray-200 px-3 py-2">
+                      {faq.sort_order}
+                    </td>
+                    <td className="border-b border-gray-200 px-3 py-2">
+                      {faq.is_active ? "Yes" : "No"}
+                    </td>
+                    <td className="border-b border-gray-200 px-3 py-2 flex gap-2">
+                      <button
+                        onClick={() => openEditModal(faq)}
+                        className="px-2 py-1 bg-yellow-400 text-white rounded text-xs hover:bg-yellow-500 transition"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(faq.id)}
+                        className="px-2 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 transition"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                !isLoading && (
+                  <tr>
+                    <td colSpan="9" className="text-center py-6 text-gray-400">
+                      No records found
+                    </td>
+                  </tr>
+                )
               )}
             </tbody>
           </table>
