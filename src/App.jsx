@@ -32,10 +32,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Router>
         <Routes>
-          {/* Login sahifasi */}
-          <Route path="/login" element={<LoginPage />} />
-
-          {/* Barcha sahifalar private, login bo'lmasa redirect */}
+          <Route path="/" element={<LoginPage />} />
           <Route
             element={
               <PrivateRoute>
