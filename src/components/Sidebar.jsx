@@ -10,6 +10,9 @@ const Sidebar = () => {
     { name: "Tour Schedule", path: "/tour-schedule", icon: <Film size={18} /> },
     { name: "Tour Tag", path: "/tour-tag", icon: <Tag size={18} /> },
     { name: "Hotel", path: "/hotel", icon: <Hotel size={18} /> },
+    { name: "Categroy", path: "/category", icon: <Hotel size={18} /> },
+    { name: "Country", path: "/country", icon: <Hotel size={18} /> },
+
     {
       name: "Package Tour",
       path: "/package-tour",
