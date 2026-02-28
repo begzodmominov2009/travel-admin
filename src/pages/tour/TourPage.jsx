@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import {
   useGet,
   usePost,
-  useDelete,
   usePatch,
+  useDelete,
 } from "../../../hooks/useGetFetch";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-// MAP PICKER
+// MAP PICKER COMPONENT
 const LocationPicker = ({ lat, lng, setLat, setLng }) => {
   useMapEvents({
     click(e) {
@@ -65,6 +65,7 @@ const TourPage = () => {
     is_featured: false,
     is_active: true,
   };
+
   const [formData, setFormData] = useState(initialState);
 
   // ================= HANDLERS =================
@@ -101,7 +102,7 @@ const TourPage = () => {
     e.preventDefault();
     if (editingId) {
       updateTour.mutate(
-        { id: editingId, data: formData },
+        { id: editingId, body: formData },
         { onSuccess: () => get("tours") },
       );
     } else {
@@ -118,11 +119,12 @@ const TourPage = () => {
 
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
+      {/* HEADER */}
       <div className="flex justify-between mb-6">
         <h1 className="text-2xl font-semibold">Tour Management</h1>
         <button
           onClick={openCreateModal}
-          className="px-5 py-2 bg-black text-white rounded-xl"
+          className="px-5 py-2 bg-black text-white rounded-xl hover:bg-gray-800 transition"
         >
           + New Tour
         </button>
@@ -131,7 +133,7 @@ const TourPage = () => {
       {isLoading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error.message}</p>}
 
-      {/* ================= TABLE ================= */}
+      {/* TABLE */}
       <div className="bg-white rounded-xl shadow p-4 overflow-auto max-h-[70vh]">
         <div className="overflow-x-auto">
           <table className="min-w-[1800px] w-full border-collapse text-sm">
@@ -175,7 +177,7 @@ const TourPage = () => {
                   className={`${i % 2 === 0 ? "bg-gray-50" : "bg-white"} hover:bg-gray-100`}
                 >
                   {/* Cover Image */}
-                  <td className="border-b border-gray-200 px-3 py-2 max-w-[80px] h-[60px] overflow-hidden flex justify-center items-center">
+                  <td className="border-b border-gray-200 px-3 py-2 max-w-[80px] h-[60px] flex justify-center items-center">
                     {tour.cover_image ? (
                       <img
                         className="h-[50px] w-[50px] object-cover rounded"
@@ -212,7 +214,7 @@ const TourPage = () => {
                   ].map((cell, idx) => (
                     <td
                       key={idx}
-                      className="border-b border-gray-200 whitespace-nowrap px-3 py-2 max-w-[200px] h-[60px] overflow-x-auto overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 "
+                      className="border-b border-gray-200 whitespace-nowrap px-3 py-2 max-w-[200px] overflow-x-auto"
                     >
                       {cell}
                     </td>
@@ -235,12 +237,20 @@ const TourPage = () => {
                   </td>
                 </tr>
               ))}
+
+              {tourData.length === 0 && !isLoading && (
+                <tr>
+                  <td colSpan="20" className="text-center py-6 text-gray-400">
+                    No tours found
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* ================= MODAL ================= */}
+      {/* MODAL */}
       {modalOpen && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white w-full max-w-5xl p-6 rounded-2xl shadow-xl overflow-y-auto max-h-[90vh] space-y-4">
@@ -248,7 +258,7 @@ const TourPage = () => {
               {editingId ? "Edit Tour" : "Create Tour"}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-3">
-              {/* Label + Input for all fields */}
+              {/* Fields */}
               {[
                 {
                   label: "Destination",
@@ -335,12 +345,12 @@ const TourPage = () => {
                           ? formData[field.name].join(",")
                           : formData[field.name]
                       }
-                      onChange={(e) =>
+                      onChange={
                         ["highlights", "includes", "excludes"].includes(
                           field.name,
                         )
-                          ? handleArrayChange(e, field.name)
-                          : handleChange(e)
+                          ? (e) => handleArrayChange(e, field.name)
+                          : handleChange
                       }
                       className="w-full border p-3 rounded-xl"
                     />

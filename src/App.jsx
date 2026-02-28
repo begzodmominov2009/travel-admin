@@ -20,10 +20,18 @@ import TagsPage from "./pages/tags/TagsPage";
 import TourPage from "./pages/tour/TourPage";
 import TourSchedualePage from "./pages/tour-scheduale/TourSchedualePage";
 import TourTagPage from "./pages/tour-tag/TourTagPage";
+<<<<<<< HEAD
 import LoginPage from "./pages/auth/LoginPage";
 import PrivateRoute from "./pages/auth/PrivateRoute";
 
 // Login + PrivateRoute
+=======
+import Layout from "./components/Layout";
+import CategoryPage from "./pages/category/CategoryPage";
+import CountryPage from "./pages/country/CountryPage";
+  import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import TourSchedulePage from "./pages/tour-scheduale/TourSchedualePage";
+>>>>>>> 003005fa4afb6a3095d16fe941229c3602e6ebff
 
 function App() {
   const queryClient = new QueryClient();
@@ -55,7 +63,7 @@ function App() {
             <Route path="/packages" element={<PackagesPage />} />
             <Route path="/tags" element={<TagsPage />} />
             <Route path="/tour" element={<TourPage />} />
-            <Route path="/tour-schedule" element={<TourSchedualePage />} />
+            <Route path="/tour-schedule" element={<TourSchedulePage />} />
             <Route path="/tour-tag" element={<TourTagPage />} />
           </Route>
         </Routes>
