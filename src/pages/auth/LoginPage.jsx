@@ -58,7 +58,7 @@ const LoginPage = () => {
                             href="https://t.me/bakhadirivich_7"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-[12px] block text-blue-600 border-b-0 hover:border-b hover:border-blue-600 transition-all duration-200"
+                            className="text-[12px] block text-blue-500 border-b-0 hover:border-b hover:border-blue-500 transition-all duration-200"
                         >
                             bakhadirivich_7
                         </a>
