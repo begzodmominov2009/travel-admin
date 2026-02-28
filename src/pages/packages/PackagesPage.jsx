@@ -59,8 +59,8 @@ const PackagesPage = () => {
     setFormData({
       ...initialState,
       ...item,
-      includes: item.includes.length ? item.includes : [""],
-      excludes: item.excludes.length ? item.excludes : [""],
+      includes: Array.isArray(item.includes) && item.includes.length ? item.includes : [""],
+      excludes: Array.isArray(item.excludes) && item.excludes.length ? item.excludes : [""],
     });
     setModalOpen(true);
   };
@@ -96,7 +96,6 @@ const PackagesPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (editingId) {
-      // PATCH: id URL orqali, formData body
       updatePackage.mutate(
         { id: editingId, body: formData },
         { onSuccess: () => get("package") }
@@ -106,6 +105,7 @@ const PackagesPage = () => {
     }
     setModalOpen(false);
   };
+
   const handleDelete = (id) => {
     if (window.confirm("Delete this package?")) {
       deletePackage.mutate(id, { onSuccess: () => get("package") });
@@ -150,7 +150,7 @@ const PackagesPage = () => {
             </tr>
           </thead>
           <tbody>
-            {packageData.map((item, i) => (
+            {Array.isArray(packageData) && packageData.map((item, i) => (
               <tr key={item.id} className={i % 2 === 0 ? "bg-gray-50" : "bg-white"}>
                 <td className="px-3 py-2">{item.title}</td>
                 <td className="px-3 py-2">{item.slug}</td>
@@ -230,7 +230,7 @@ const PackagesPage = () => {
                     className="w-full border p-3 rounded-xl"
                   >
                     <option value="">Select Country</option>
-                    {countryData.map((country) => (
+                    {Array.isArray(countryData) && countryData.map((country) => (
                       <option key={country.id} value={country.id}>{country.name}</option>
                     ))}
                   </select>
@@ -246,7 +246,7 @@ const PackagesPage = () => {
                     className="w-full border p-3 rounded-xl"
                   >
                     <option value="">Select Destination</option>
-                    {destinationData.map((destination) => (
+                    {Array.isArray(destinationData) && destinationData.map((destination) => (
                       <option key={destination.id} value={destination.id}>{destination.name}</option>
                     ))}
                   </select>
@@ -290,7 +290,7 @@ const PackagesPage = () => {
               {/* DYNAMIC INCLUDES */}
               <div>
                 <label className="font-medium">Includes</label>
-                {formData.includes.map((item, index) => (
+                {Array.isArray(formData.includes) && formData.includes.map((item, index) => (
                   <div key={index} className="flex gap-2 mt-2">
                     <input
                       type="text"
@@ -315,7 +315,7 @@ const PackagesPage = () => {
               {/* DYNAMIC EXCLUDES */}
               <div>
                 <label className="font-medium mt-3 block">Excludes</label>
-                {formData.excludes.map((item, index) => (
+                {Array.isArray(formData.excludes) && formData.excludes.map((item, index) => (
                   <div key={index} className="flex gap-2 mt-2">
                     <input
                       type="text"
