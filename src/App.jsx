@@ -22,12 +22,8 @@ import PrivateRoute from "./pages/auth/PrivateRoute";
 import TourSchedulePage from "./pages/tour-scheduale/TourSchedualePage";
 
 // Login + PrivateRoute
-<<<<<<< HEAD
 import CategoryPage from "./pages/category/CategoryPage";
 import CountryPage from "./pages/country/CountryPage";
-import TourSchedulePage from "./pages/tour-scheduale/TourSchedualePage";
-=======
->>>>>>> 390ebd473b3517d9c0b8acf2e70a04b418f08b4f
 
 function App() {
   const queryClient = new QueryClient();
