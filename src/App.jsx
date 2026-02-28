@@ -14,8 +14,8 @@ import TourPage from "./pages/tour/TourPage";
 import TourSchedualePage from "./pages/tour-scheduale/TourSchedualePage";
 import TourTagPage from "./pages/tour-tag/TourTagPage";
 import Layout from "./components/Layout";
-
-
+import CategoryPage from "./pages/category/CategoryPage";
+import CountryPage from "./pages/country/CountryPage";
 
 function App() {
   return (
@@ -23,6 +23,9 @@ function App() {
       <Routes>
         {/* Barcha sahifalar Layout bilan o‘raladi */}
         <Route element={<Layout />}>
+          <Route path="/category" element={<CategoryPage />} />
+          <Route path="/country" element={<CountryPage />} />
+
           <Route path="/destination" element={<DestinationPage />} />
           <Route path="/faq" element={<FaqPage />} />
           <Route path="/hotel" element={<HotelPage />} />
