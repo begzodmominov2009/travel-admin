@@ -1,19 +1,11 @@
+"use client";
+
 import React, { useState } from "react";
-import {
-  useGet,
-  usePost,
-  usePatch,
-  useDelete,
-} from "../../../hooks/useGetFetch";
+import { useGet, usePost, usePatch, useDelete } from "../../../hooks/useGetFetch";
 
 const PackageTagPage = () => {
   // ================= DATA =================
-  const {
-    data: packageTags = [],
-    isLoading,
-    error,
-    get,
-  } = useGet("package_tags", "package_tag");
+  const { data: packageTags = [], isLoading, error, get } = useGet("package_tags", "package_tag");
   const { data: packages = [] } = useGet("packages", "package");
   const { data: tags = [] } = useGet("tags", "tag");
 
@@ -39,7 +31,7 @@ const PackageTagPage = () => {
   };
 
   const openEditModal = (pt) => {
-    setEditingId(pt.id);
+    setEditingId(pt?.id ?? null);
     setFormData({ ...pt });
     setModalOpen(true);
   };
@@ -57,14 +49,14 @@ const PackageTagPage = () => {
     if (editingId) {
       updatePackageTag.mutate(
         { id: editingId, body: formData },
-        { onSuccess: () => get("package_tags") },
+        { onSuccess: () => { get("package_tags"); setModalOpen(false); } }
       );
     } else {
-      createPackageTag.mutate(formData, {
-        onSuccess: () => get("package_tags"),
-      });
+      createPackageTag.mutate(
+        formData,
+        { onSuccess: () => { get("package_tags"); setModalOpen(false); } }
+      );
     }
-    setModalOpen(false);
   };
 
   const handleDelete = (id) => {
@@ -87,7 +79,7 @@ const PackageTagPage = () => {
       </div>
 
       {isLoading && <p>Loading...</p>}
-      {error && <p className="text-red-500">{error.message}</p>}
+      {error && <p className="text-red-500">{error?.message ?? "Something went wrong"}</p>}
 
       {/* TABLE */}
       <div className="bg-white rounded-xl shadow p-4 overflow-auto max-h-[70vh]">
@@ -96,26 +88,18 @@ const PackageTagPage = () => {
             <thead className="bg-gray-100 sticky top-0 z-10">
               <tr>
                 {["Package", "Tag", "Actions"].map((th) => (
-                  <th
-                    key={th}
-                    className="border-b border-gray-200 px-3 py-2 font-medium text-gray-700 text-left"
-                  >
-                    {th}
-                  </th>
+                  <th key={th} className="border-b border-gray-200 px-3 py-2 font-medium text-gray-700 text-left">{th}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {packageTags.map((pt, i) => (
-                <tr
-                  key={pt.id}
-                  className={`${i % 2 === 0 ? "bg-gray-50" : "bg-white"} hover:bg-gray-100`}
-                >
+              {packageTags?.length ? packageTags.map((pt, i) => (
+                <tr key={pt?.id} className={`${i % 2 === 0 ? "bg-gray-50" : "bg-white"} hover:bg-gray-100`}>
                   <td className="border-b border-gray-200 px-3 py-2">
-                    {packages.find((p) => p.id === pt.package_id)?.title || "-"}
+                    {packages?.find((p) => p?.id === pt?.package_id)?.title ?? "-"}
                   </td>
                   <td className="border-b border-gray-200 px-3 py-2">
-                    {tags.find((t) => t.id === pt.tag_id)?.name || "-"}
+                    {tags?.find((t) => t?.id === pt?.tag_id)?.name ?? "-"}
                   </td>
                   <td className="border-b border-gray-200 px-3 py-2 flex gap-2">
                     <button
@@ -125,19 +109,16 @@ const PackageTagPage = () => {
                       Edit
                     </button>
                     <button
-                      onClick={() => handleDelete(pt.id)}
+                      onClick={() => handleDelete(pt?.id)}
                       className="px-2 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 transition"
                     >
                       Delete
                     </button>
                   </td>
                 </tr>
-              ))}
-              {packageTags.length === 0 && !isLoading && (
+              )) : (
                 <tr>
-                  <td colSpan="3" className="text-center py-6 text-gray-400">
-                    No records found
-                  </td>
+                  <td colSpan="3" className="text-center py-6 text-gray-400">No records found</td>
                 </tr>
               )}
             </tbody>
@@ -149,9 +130,7 @@ const PackageTagPage = () => {
       {modalOpen && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white w-full max-w-2xl p-6 rounded-2xl shadow-xl overflow-y-auto max-h-[90vh] space-y-4">
-            <h2 className="text-xl font-semibold mb-4">
-              {editingId ? "Edit Record" : "Create Record"}
-            </h2>
+            <h2 className="text-xl font-semibold mb-4">{editingId ? "Edit Record" : "Create Record"}</h2>
             <form onSubmit={handleSubmit} className="space-y-3">
               {/* Package select */}
               <div>
@@ -164,11 +143,7 @@ const PackageTagPage = () => {
                   required
                 >
                   <option value="">Select Package</option>
-                  {packages.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.title}
-                    </option>
-                  ))}
+                  {packages?.map((p) => <option key={p?.id} value={p?.id}>{p?.title}</option>)}
                 </select>
               </div>
 
@@ -183,28 +158,16 @@ const PackageTagPage = () => {
                   required
                 >
                   <option value="">Select Tag</option>
-                  {tags.map((t) => (
-                    <option key={t.id} value={t.id}>
-                      {t.name}
-                    </option>
-                  ))}
+                  {tags?.map((t) => <option key={t?.id} value={t?.id}>{t?.name}</option>)}
                 </select>
               </div>
 
               {/* Buttons */}
               <div className="flex justify-end gap-3 pt-3">
-                <button
-                  type="button"
-                  onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 bg-gray-200 rounded-xl"
-                >
-                  Cancel
-                </button>
+                <button type="button" onClick={() => setModalOpen(false)} className="px-4 py-2 bg-gray-200 rounded-xl">Cancel</button>
                 <button
                   type="submit"
-                  disabled={
-                    createPackageTag.isPending || updatePackageTag.isPending
-                  }
+                  disabled={createPackageTag?.isPending || updatePackageTag?.isPending}
                   className="px-4 py-2 bg-black text-white rounded-xl"
                 >
                   {editingId ? "Update Record" : "Create Record"}

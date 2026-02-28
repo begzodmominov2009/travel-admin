@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { useGet, usePost, usePatch, useDelete } from "../../../hooks/useGetFetch";
 
@@ -6,17 +8,14 @@ const MEDIA_TYPES = ["image", "video", "document"];
 
 const MediaPage = () => {
   // ================= QUERIES =================
-  const {
-    data: mediaList = [],
-    isLoading,
-    error,
-  } = useGet("media", "media");
+  const { data: mediaList = [], isLoading, error, get } = useGet("media", "media");
 
   // ================= MUTATIONS =================
   const createMedia = usePost("media", "media");
   const updateMedia = usePatch("media", "media");
   const deleteMedia = useDelete("media", "media");
 
+  // ================= STATE =================
   const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -65,26 +64,24 @@ const MediaPage = () => {
     if (editingId) {
       updateMedia.mutate(
         { id: editingId, body: formData },
-        { onSuccess: () => setModalOpen(false) }
+        { onSuccess: () => { get("media"); setModalOpen(false); } }
       );
     } else {
-      createMedia.mutate(formData, { onSuccess: () => setModalOpen(false) });
+      createMedia.mutate(formData, { onSuccess: () => { get("media"); setModalOpen(false); } });
     }
   };
 
   const handleDelete = (id) => {
     if (window.confirm("Delete this media?")) {
-      deleteMedia.mutate(id);
+      deleteMedia.mutate(id, { onSuccess: () => get("media") });
     }
   };
 
-  // ================= UI =================
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
+      {/* HEADER */}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold text-gray-800">
-          Media Management
-        </h1>
+        <h1 className="text-2xl font-semibold text-gray-800">Media Management</h1>
         <button
           onClick={openCreateModal}
           className="px-5 py-2 bg-black text-white rounded-xl hover:opacity-80 transition"
@@ -96,27 +93,18 @@ const MediaPage = () => {
       {isLoading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error.message}</p>}
 
-
-      {/* ===== TABLE VIEW ===== */}
+      {/* TABLE */}
       <div className="bg-white shadow-md rounded-2xl overflow-auto">
         <table className="w-full text-sm">
           <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
             <tr>
-              <th className="px-4 py-3 text-left">Preview</th>
-              <th className="px-4 py-3 text-left">ID</th>
-              <th className="px-4 py-3 text-left">Created</th>
-              <th className="px-4 py-3 text-left">Title</th>
-              <th className="px-4 py-3 text-left">Entity Type</th>
-              <th className="px-4 py-3 text-left">Entity ID</th>
-              <th className="px-4 py-3 text-left">Media Type</th>
-              <th className="px-4 py-3 text-left">URL</th>
-              <th className="px-4 py-3 text-left">Sort</th>
-              <th className="px-4 py-3 text-left">Cover</th>
-              <th className="px-4 py-3 text-right">Actions</th>
+              {["Preview", "ID", "Created", "Title", "Entity Type", "Entity ID", "Media Type", "URL", "Sort", "Cover", "Actions"].map((th) => (
+                <th key={th} className="px-4 py-3 text-left">{th}</th>
+              ))}
             </tr>
           </thead>
           <tbody>
-            {mediaList.map((item) => (
+            {mediaList.length ? mediaList.map((item) => (
               <tr key={item.id} className="border-t hover:bg-gray-50 transition">
                 <td className="px-4 py-2">
                   {item.thumbnail || item.url ? (
@@ -128,38 +116,23 @@ const MediaPage = () => {
                       onError={(e) => (e.target.style.display = "none")}
                     />
                   ) : (
-                    <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-300 text-xl">
-                      🖼
-                    </div>
+                    <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-300 text-xl">🖼</div>
                   )}
                 </td>
                 <td className="px-4 py-3 text-xs text-gray-400">{item.id}</td>
-                <td className="px-4 py-3 text-xs text-gray-400">
-                  {item.created_at === "now"
-                    ? "now"
-                    : new Date(item.created_at).toLocaleDateString()}
-                </td>
+                <td className="px-4 py-3 text-xs text-gray-400">{item.created_at === "now" ? "now" : new Date(item.created_at).toLocaleDateString()}</td>
                 <td className="px-4 py-3 font-medium">{item.title || "—"}</td>
                 <td className="px-4 py-3 capitalize">{item.entity_type}</td>
                 <td className="px-4 py-3">{item.entity_id}</td>
                 <td className="px-4 py-3">
-                  <span className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-600 capitalize">
-                    {item.media_type}
-                  </span>
+                  <span className="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-600 capitalize">{item.media_type}</span>
                 </td>
                 <td className="px-4 py-3 max-w-[200px] truncate text-xs text-blue-500">
-                  <a href={item.url} target="_blank" rel="noreferrer">
-                    {item.url}
-                  </a>
+                  <a href={item.url} target="_blank" rel="noreferrer">{item.url}</a>
                 </td>
                 <td className="px-4 py-3">{item.sort_order}</td>
                 <td className="px-4 py-3">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${item.is_cover
-                        ? "bg-yellow-100 text-yellow-600"
-                        : "bg-gray-100 text-gray-400"
-                      }`}
-                  >
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${item.is_cover ? "bg-yellow-100 text-yellow-600" : "bg-gray-100 text-gray-400"}`}>
                     {item.is_cover ? "Cover" : "No"}
                   </span>
                 </td>
@@ -178,12 +151,14 @@ const MediaPage = () => {
                   </button>
                 </td>
               </tr>
-            ))}
+            )) : (
+              <tr><td colSpan={11} className="text-center py-6 text-gray-400">No media found</td></tr>
+            )}
           </tbody>
         </table>
       </div>
 
-      {/* ===== IMAGE PREVIEW MODAL ===== */}
+      {/* IMAGE PREVIEW MODAL */}
       {previewUrl && (
         <div
           className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
@@ -203,13 +178,11 @@ const MediaPage = () => {
         </div>
       )}
 
-      {/* ===== CREATE / EDIT MODAL ===== */}
+      {/* CREATE / EDIT MODAL */}
       {modalOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-6 max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-semibold mb-5">
-              {editingId ? "Edit Media" : "Add Media"}
-            </h2>
+            <h2 className="text-xl font-semibold mb-5">{editingId ? "Edit Media" : "Add Media"}</h2>
             <form onSubmit={handleSubmit} className="space-y-3">
 
               {/* Entity Type */}
@@ -223,132 +196,59 @@ const MediaPage = () => {
                   required
                 >
                   <option value="">Select Entity Type</option>
-                  {ENTITY_TYPES.map((t) => (
-                    <option key={t} value={t}>
-                      {t.charAt(0).toUpperCase() + t.slice(1)}
-                    </option>
-                  ))}
+                  {ENTITY_TYPES.map((t) => <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}
                 </select>
               </div>
 
               {/* Entity ID */}
               <div>
                 <label className="text-xs text-gray-500 mb-1 block">Entity ID</label>
-                <input
-                  type="number"
-                  name="entity_id"
-                  value={formData.entity_id}
-                  onChange={handleChange}
-                  min={0}
-                  className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none"
-                />
+                <input type="number" name="entity_id" value={formData.entity_id} onChange={handleChange} min={0} className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none" />
               </div>
 
               {/* Media Type */}
               <div>
                 <label className="text-xs text-gray-500 mb-1 block">Media Type</label>
-                <select
-                  name="media_type"
-                  value={formData.media_type}
-                  onChange={handleChange}
-                  className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none bg-white"
-                >
-                  {MEDIA_TYPES.map((t) => (
-                    <option key={t} value={t}>
-                      {t.charAt(0).toUpperCase() + t.slice(1)}
-                    </option>
-                  ))}
+                <select name="media_type" value={formData.media_type} onChange={handleChange} className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none bg-white">
+                  {MEDIA_TYPES.map((t) => <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}
                 </select>
               </div>
 
               {/* URL */}
               <div>
                 <label className="text-xs text-gray-500 mb-1 block">URL</label>
-                <input
-                  type="text"
-                  name="url"
-                  placeholder="https://..."
-                  value={formData.url}
-                  onChange={handleChange}
-                  className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none"
-                  required
-                />
-                {formData.url && (
-                  <img
-                    src={formData.url}
-                    alt="preview"
-                    className="mt-2 w-full h-40 object-cover rounded-xl border"
-                    onError={(e) => (e.target.style.display = "none")}
-                  />
-                )}
+                <input type="text" name="url" placeholder="https://..." value={formData.url} onChange={handleChange} className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none" required />
+                {formData.url && <img src={formData.url} alt="preview" className="mt-2 w-full h-40 object-cover rounded-xl border" onError={(e) => e.target.style.display = "none"} />}
               </div>
 
               {/* Thumbnail */}
               <div>
                 <label className="text-xs text-gray-500 mb-1 block">Thumbnail URL</label>
-                <input
-                  type="text"
-                  name="thumbnail"
-                  placeholder="https://..."
-                  value={formData.thumbnail}
-                  onChange={handleChange}
-                  className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none"
-                />
+                <input type="text" name="thumbnail" placeholder="https://..." value={formData.thumbnail} onChange={handleChange} className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none" />
               </div>
 
               {/* Title */}
               <div>
                 <label className="text-xs text-gray-500 mb-1 block">Title</label>
-                <input
-                  type="text"
-                  name="title"
-                  placeholder="Media title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none"
-                />
+                <input type="text" name="title" placeholder="Media title" value={formData.title} onChange={handleChange} className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none" />
               </div>
 
               {/* Sort Order */}
               <div>
                 <label className="text-xs text-gray-500 mb-1 block">Sort Order</label>
-                <input
-                  type="number"
-                  name="sort_order"
-                  value={formData.sort_order}
-                  onChange={handleChange}
-                  min={0}
-                  className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none"
-                />
+                <input type="number" name="sort_order" value={formData.sort_order} onChange={handleChange} min={0} className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none" />
               </div>
 
-              {/* is_cover */}
+              {/* Is Cover */}
               <label className="flex items-center gap-3 text-sm mt-2">
-                <input
-                  type="checkbox"
-                  name="is_cover"
-                  checked={formData.is_cover}
-                  onChange={handleChange}
-                  className="w-4 h-4"
-                />
+                <input type="checkbox" name="is_cover" checked={formData.is_cover} onChange={handleChange} className="w-4 h-4" />
                 Is Cover
               </label>
 
+              {/* Buttons */}
               <div className="flex justify-end gap-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 transition"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={createMedia.isPending || updateMedia.isPending}
-                  className="px-4 py-2 rounded-xl bg-black text-white hover:opacity-80 transition"
-                >
-                  {editingId ? "Update" : "Create"}
-                </button>
+                <button type="button" onClick={() => setModalOpen(false)} className="px-4 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 transition">Cancel</button>
+                <button type="submit" disabled={createMedia.isPending || updateMedia.isPending} className="px-4 py-2 rounded-xl bg-black text-white hover:opacity-80 transition">{editingId ? "Update" : "Create"}</button>
               </div>
             </form>
           </div>

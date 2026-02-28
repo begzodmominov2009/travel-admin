@@ -54,8 +54,8 @@ const FaqPage = () => {
         type === "checkbox"
           ? checked
           : type === "number"
-            ? Number(value)
-            : value,
+          ? Number(value)
+          : value,
     }));
   };
 
@@ -138,8 +138,9 @@ const FaqPage = () => {
                 faqs.map((faq, i) => (
                   <tr
                     key={faq.id}
-                    className={`${i % 2 === 0 ? "bg-gray-50" : "bg-white"
-                      } hover:bg-gray-100`}
+                    className={`${
+                      i % 2 === 0 ? "bg-gray-50" : "bg-white"
+                    } hover:bg-gray-100`}
                   >
                     <td className="border-b border-gray-200 px-3 py-2">
                       {faq.entity_type}
@@ -147,12 +148,12 @@ const FaqPage = () => {
                     <td className="border-b border-gray-200 px-3 py-2">
                       {faq.entity_type === "package"
                         ? packages.find((p) => p.id === faq.entity_id)?.title ||
-                        "-"
+                          "-"
                         : faq.entity_type === "tour"
-                          ? tours.find((t) => t.id === faq.entity_id)?.title || "-"
-                          : faq.entity_type === "tag"
-                            ? tags.find((t) => t.id === faq.entity_id)?.name || "-"
-                            : "-"}
+                        ? tours.find((t) => t.id === faq.entity_id)?.title || "-"
+                        : faq.entity_type === "tag"
+                        ? tags.find((t) => t.id === faq.entity_id)?.name || "-"
+                        : "-"}
                     </td>
                     <td className="border-b border-gray-200 px-3 py-2">
                       {faq.question}

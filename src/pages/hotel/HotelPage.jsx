@@ -35,8 +35,8 @@ const HotelPage = () => {
     slug: "",
     description: "",
     address: "",
-    latitude: 0,
-    longitude: 0,
+    latitude: 41.2995, // default Tashkent
+    longitude: 69.2401,
     stars: 0,
     price_per_night: 0,
     currency: "USD",
@@ -60,7 +60,11 @@ const HotelPage = () => {
 
   const openEditModal = (hotel) => {
     setEditingId(hotel.id);
-    setFormData({ ...hotel });
+    setFormData({
+      ...initialState,
+      ...hotel,
+      amenities: hotel.amenities || [],
+    });
     setModalOpen(true);
   };
 
@@ -99,6 +103,7 @@ const HotelPage = () => {
 
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
+      {/* HEADER */}
       <div className="flex justify-between mb-6">
         <h1 className="text-2xl font-semibold">Hotel Management</h1>
         <button
@@ -146,62 +151,72 @@ const HotelPage = () => {
               </tr>
             </thead>
             <tbody>
-              {hotelData.map((hotel, i) => (
-                <tr
-                  key={hotel.id}
-                  className={`${i % 2 === 0 ? "bg-gray-50" : "bg-white"} hover:bg-gray-100`}
-                >
-                  <td className="border-b border-gray-200 px-3 py-2 flex justify-center items-center">
-                    {hotel.cover_image ? (
-                      <img
-                        className="h-12 w-12 object-cover rounded"
-                        src={hotel.cover_image}
-                        alt=""
-                      />
-                    ) : (
-                      <span className="text-gray-400 text-xs">No Image</span>
-                    )}
-                  </td>
-                  <td className="border-b border-gray-200 px-3 py-2">{hotel.name}</td>
-                  <td className="border-b border-gray-200 px-3 py-2">
-                    {destinationData.find((d) => d.id === hotel.destination_id)?.name || "-"}
-                  </td>
-                  <td className="border-b border-gray-200 px-3 py-2">{hotel.slug}</td>
-                  <td className="border-b border-gray-200 px-3 py-2">{hotel.address}</td>
-                  <td className="border-b border-gray-200 px-3 py-2">{hotel.stars}</td>
-                  <td className="border-b border-gray-200 px-3 py-2">{hotel.price_per_night}</td>
-                  <td className="border-b border-gray-200 px-3 py-2">{hotel.currency}</td>
-                  <td className="border-b border-gray-200 px-3 py-2">{hotel.phone}</td>
-                  <td className="border-b border-gray-200 px-3 py-2">{hotel.email}</td>
-                  <td className="border-b border-gray-200 px-3 py-2">{hotel.website}</td>
-                  <td className="border-b border-gray-200 px-3 py-2">
-                    {hotel.check_in_time} / {hotel.check_out_time}
-                  </td>
-                  <td className="border-b border-gray-200 px-3 py-2">
-                    {hotel.amenities.join(", ")}
-                  </td>
-                  <td className="border-b border-gray-200 px-3 py-2">
-                    {hotel.latitude}, {hotel.longitude}
-                  </td>
-                  <td className="border-b border-gray-200 px-3 py-2">
-                    {hotel.is_active ? "Yes" : "No"}
-                  </td>
-                  <td className="border-b border-gray-200 px-3 py-2 flex gap-2">
-                    <button
-                      onClick={() => openEditModal(hotel)}
-                      className="px-2 py-1 bg-yellow-400 text-white rounded text-xs hover:bg-yellow-500 transition"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(hotel.id)}
-                      className="px-2 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 transition"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {Array.isArray(hotelData) && hotelData.length > 0 ? (
+                hotelData.map((hotel, i) => (
+                  <tr
+                    key={hotel.id}
+                    className={`${i % 2 === 0 ? "bg-gray-50" : "bg-white"} hover:bg-gray-100`}
+                  >
+                    <td className="border-b border-gray-200 px-3 py-2 flex justify-center items-center">
+                      {hotel.cover_image ? (
+                        <img
+                          className="h-12 w-12 object-cover rounded"
+                          src={hotel.cover_image}
+                          alt=""
+                        />
+                      ) : (
+                        <span className="text-gray-400 text-xs">No Image</span>
+                      )}
+                    </td>
+                    <td className="border-b border-gray-200 px-3 py-2">{hotel.name}</td>
+                    <td className="border-b border-gray-200 px-3 py-2">
+                      {destinationData.find((d) => d.id === hotel.destination_id)?.name || "-"}
+                    </td>
+                    <td className="border-b border-gray-200 px-3 py-2">{hotel.slug}</td>
+                    <td className="border-b border-gray-200 px-3 py-2">{hotel.address}</td>
+                    <td className="border-b border-gray-200 px-3 py-2">{hotel.stars}</td>
+                    <td className="border-b border-gray-200 px-3 py-2">{hotel.price_per_night}</td>
+                    <td className="border-b border-gray-200 px-3 py-2">{hotel.currency}</td>
+                    <td className="border-b border-gray-200 px-3 py-2">{hotel.phone}</td>
+                    <td className="border-b border-gray-200 px-3 py-2">{hotel.email}</td>
+                    <td className="border-b border-gray-200 px-3 py-2">{hotel.website}</td>
+                    <td className="border-b border-gray-200 px-3 py-2">
+                      {hotel.check_in_time} / {hotel.check_out_time}
+                    </td>
+                    <td className="border-b border-gray-200 px-3 py-2">
+                      {hotel.amenities?.join(", ")}
+                    </td>
+                    <td className="border-b border-gray-200 px-3 py-2">
+                      {hotel.latitude}, {hotel.longitude}
+                    </td>
+                    <td className="border-b border-gray-200 px-3 py-2">
+                      {hotel.is_active ? "Yes" : "No"}
+                    </td>
+                    <td className="border-b border-gray-200 px-3 py-2 flex gap-2">
+                      <button
+                        onClick={() => openEditModal(hotel)}
+                        className="px-2 py-1 bg-yellow-400 text-white rounded text-xs hover:bg-yellow-500 transition"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(hotel.id)}
+                        className="px-2 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 transition"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                !isLoading && (
+                  <tr>
+                    <td colSpan="16" className="text-center py-6 text-gray-400">
+                      No records found
+                    </td>
+                  </tr>
+                )
+              )}
             </tbody>
           </table>
         </div>
@@ -215,6 +230,7 @@ const HotelPage = () => {
               {editingId ? "Edit Hotel" : "Create Hotel"}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-3">
+              {/* FORM FIELDS */}
               {[
                 { label: "Destination", name: "destination_id", type: "select", options: destinationData },
                 { label: "Name", name: "name" },
@@ -285,12 +301,12 @@ const HotelPage = () => {
                 </div>
               ))}
 
-              {/* Map */}
+              {/* MAP */}
               <div>
                 <label className="block mb-1 font-medium">Hotel Location (Click Map)</label>
                 <div className="w-full h-64">
                   <MapContainer
-                    center={[formData.latitude || 41.2995, formData.longitude || 69.2401]}
+                    center={[formData.latitude, formData.longitude]}
                     zoom={6}
                     className="h-full w-full rounded-xl"
                   >
@@ -321,7 +337,7 @@ const HotelPage = () => {
                 </label>
               </div>
 
-              {/* Submit */}
+              {/* Submit Buttons */}
               <div className="flex justify-end gap-3 pt-3">
                 <button
                   type="button"
