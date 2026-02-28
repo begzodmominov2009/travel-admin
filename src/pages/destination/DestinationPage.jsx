@@ -1,5 +1,29 @@
 import React, { useState } from "react";
-import { useGet, usePost, usePatch, useDelete } from "../../../hooks/useGetFetch";
+import {
+  useGet,
+  usePost,
+  usePatch,
+  useDelete,
+} from "../../../hooks/useGetFetch";
+import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+
+// ================= MAP PICKER =================
+const LocationPicker = ({ latitude, longitude, setFormData }) => {
+  useMapEvents({
+    click(e) {
+      setFormData((prev) => ({
+        ...prev,
+        latitude: e.latlng.lat,
+        longitude: e.latlng.lng,
+      }));
+    },
+  });
+
+  return latitude && longitude ? (
+    <Marker position={[latitude, longitude]} />
+  ) : null;
+};
 
 const DestinationPage = () => {
   // ================= QUERIES =================
@@ -8,7 +32,6 @@ const DestinationPage = () => {
     isLoading,
     error,
   } = useGet("destinations", "destination");
-
   const { data: countries = [] } = useGet("countries", "country");
 
   // ================= MUTATIONS =================
@@ -16,6 +39,7 @@ const DestinationPage = () => {
   const updateDestination = usePatch("destination", "destinations");
   const deleteDestination = useDelete("destination", "destinations");
 
+  // ================= STATE =================
   const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [highlightInput, setHighlightInput] = useState("");
@@ -91,7 +115,7 @@ const DestinationPage = () => {
     if (editingId) {
       updateDestination.mutate(
         { id: editingId, body: payload },
-        { onSuccess: () => setModalOpen(false) }
+        { onSuccess: () => setModalOpen(false) },
       );
     } else {
       createDestination.mutate(payload, {
@@ -124,6 +148,7 @@ const DestinationPage = () => {
       {isLoading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error.message}</p>}
 
+      {/* ================= TABLE ================= */}
       <div className="bg-white shadow-md rounded-2xl overflow-auto">
         <table className="w-full text-sm">
           <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
@@ -204,6 +229,7 @@ const DestinationPage = () => {
         </table>
       </div>
 
+      {/* ================= MODAL ================= */}
       {modalOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-6 animate-fadeIn max-h-[90vh] overflow-y-auto">
@@ -310,25 +336,29 @@ const DestinationPage = () => {
                 )}
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <input
-                  type="number"
-                  name="latitude"
-                  placeholder="Latitude"
-                  value={formData.latitude}
-                  onChange={handleChange}
-                  step="any"
-                  className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none"
-                />
-                <input
-                  type="number"
-                  name="longitude"
-                  placeholder="Longitude"
-                  value={formData.longitude}
-                  onChange={handleChange}
-                  step="any"
-                  className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none"
-                />
+              {/* MAP PICKER */}
+              <div className="my-4">
+                <label className="block mb-2 font-medium">
+                  Pick Location on Map
+                </label>
+                <MapContainer
+                  center={[
+                    formData.latitude || 41.2995,
+                    formData.longitude || 69.2401,
+                  ]}
+                  zoom={5}
+                  style={{ height: "300px", width: "100%" }}
+                >
+                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                  <LocationPicker
+                    latitude={formData.latitude}
+                    longitude={formData.longitude}
+                    setFormData={setFormData}
+                  />
+                </MapContainer>
+                <p className="text-sm text-gray-500 mt-1">
+                  Latitude: {formData.latitude}, Longitude: {formData.longitude}
+                </p>
               </div>
 
               <input
@@ -356,6 +386,7 @@ const DestinationPage = () => {
                 className="w-full border p-3 rounded-xl focus:ring-2 focus:ring-black outline-none"
               />
 
+              {/* Flags */}
               <div className="flex gap-6 mt-2">
                 <label className="flex items-center gap-3 text-sm">
                   <input
@@ -379,6 +410,7 @@ const DestinationPage = () => {
                 </label>
               </div>
 
+              {/* Submit */}
               <div className="flex justify-end gap-3 pt-4">
                 <button
                   type="button"

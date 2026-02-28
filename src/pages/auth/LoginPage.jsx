@@ -52,7 +52,7 @@ const LoginPage = () => {
                     Login
                 </button>
                 <div className="flex items-center gap-2 mt-2">
-                    <p className="text-[12px]">Parolin esingizdan chiqan bo'lsa tiklash uchun murotaj</p>
+                    <p className="text-[12px]">Parol esingizdan chiqan bo'lsa tiklash uchun murotaj</p>
                     <span>
                         <a
                             href="https://t.me/bakhadirivich_7"
