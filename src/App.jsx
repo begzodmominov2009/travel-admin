@@ -17,6 +17,7 @@ import Layout from "./components/Layout";
 import CategoryPage from "./pages/category/CategoryPage";
 import CountryPage from "./pages/country/CountryPage";
   import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import TourSchedulePage from "./pages/tour-scheduale/TourSchedualePage";
 
 function App() {
 
@@ -40,7 +41,7 @@ function App() {
             <Route path="/packages" element={<PackagesPage />} />
             <Route path="/tags" element={<TagsPage />} />
             <Route path="/tour" element={<TourPage />} />
-            <Route path="/tour-schedule" element={<TourSchedualePage />} />
+            <Route path="/tour-schedule" element={<TourSchedulePage />} />
             <Route path="/tour-tag" element={<TourTagPage />} />
           </Route>
         </Routes>
