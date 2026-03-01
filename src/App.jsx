@@ -1,6 +1,13 @@
 // App.jsx
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+import Layout from "./components/Layout";
+
+// Sahifalarni import qilamiz
+import CategoryPage from "./pages/category/CategoryPage";
+import CountryPage from "./pages/country/CountryPage";
 import DestinationPage from "./pages/destination/DestinationPage";
 import FaqPage from "./pages/faq/FaqPage";
 import HotelPage from "./pages/hotel/HotelPage";
@@ -13,23 +20,31 @@ import TagsPage from "./pages/tags/TagsPage";
 import TourPage from "./pages/tour/TourPage";
 import TourSchedualePage from "./pages/tour-scheduale/TourSchedualePage";
 import TourTagPage from "./pages/tour-tag/TourTagPage";
-import Layout from "./components/Layout";
-import CategoryPage from "./pages/category/CategoryPage";
-import CountryPage from "./pages/country/CountryPage";
-  import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import LoginPage from "./pages/auth/LoginPage";
+import PrivateRoute from "./pages/auth/PrivateRoute";
+
+// Login + PrivateRoute
 
 function App() {
-
   const queryClient = new QueryClient();
+
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
         <Routes>
-          {/* Barcha sahifalar Layout bilan o‘raladi */}
-          <Route element={<Layout />}>
+          {/* Login sahifasi */}
+          <Route path="/login" element={<LoginPage />} />
+
+          {/* Barcha sahifalar private, login bo'lmasa redirect */}
+          <Route
+            element={
+              <PrivateRoute>
+                <Layout />
+              </PrivateRoute>
+            }
+          >
             <Route path="/category" element={<CategoryPage />} />
             <Route path="/country" element={<CountryPage />} />
-
             <Route path="/destination" element={<DestinationPage />} />
             <Route path="/faq" element={<FaqPage />} />
             <Route path="/hotel" element={<HotelPage />} />

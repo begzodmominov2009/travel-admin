@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useGet, usePost, usePatch, useDelete } from "../../../hooks/useGetFetch";
 
 const DestinationPage = () => {
-  // ================= QUERIES =================
   const {
     data: destinations = [],
     isLoading,
