@@ -119,7 +119,9 @@ const CategoryPage = () => {
                 <td className="px-4 py-3">{cat.name_uz}</td>
                 <td className="px-4 py-3">{cat.name_ru}</td>
                 <td className="px-4 py-3 text-gray-500">{cat.slug}</td>
-                <td className="px-4 py-3">{cat.icon}</td>
+                <td className="px-4 py-3">
+                  <img src={cat.icon} alt="" />
+                </td>
                 <td className="px-4 py-3 max-w-[200px] truncate">
                   {cat.description}
                 </td>

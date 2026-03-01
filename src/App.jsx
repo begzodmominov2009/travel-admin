@@ -6,8 +6,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Layout from "./components/Layout";
 
 // Sahifalarni import qilamiz
-import CategoryPage from "./pages/category/CategoryPage";
-import CountryPage from "./pages/country/CountryPage";
 import DestinationPage from "./pages/destination/DestinationPage";
 import FaqPage from "./pages/faq/FaqPage";
 import HotelPage from "./pages/hotel/HotelPage";
@@ -18,13 +16,14 @@ import PackageTourPage from "./pages/package-tour/PackageTourPage";
 import PackagesPage from "./pages/packages/PackagesPage";
 import TagsPage from "./pages/tags/TagsPage";
 import TourPage from "./pages/tour/TourPage";
-import TourSchedualePage from "./pages/tour-scheduale/TourSchedualePage";
 import TourTagPage from "./pages/tour-tag/TourTagPage";
 import LoginPage from "./pages/auth/LoginPage";
 import PrivateRoute from "./pages/auth/PrivateRoute";
 import TourSchedulePage from "./pages/tour-scheduale/TourSchedualePage";
 
 // Login + PrivateRoute
+import CategoryPage from "./pages/category/CategoryPage";
+import CountryPage from "./pages/country/CountryPage";
 
 function App() {
   const queryClient = new QueryClient();
@@ -33,10 +32,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Router>
         <Routes>
-          {/* Login sahifasi */}
-          <Route path="/login" element={<LoginPage />} />
-
-          {/* Barcha sahifalar private, login bo'lmasa redirect */}
+          <Route path="/" element={<LoginPage />} />
           <Route
             element={
               <PrivateRoute>
